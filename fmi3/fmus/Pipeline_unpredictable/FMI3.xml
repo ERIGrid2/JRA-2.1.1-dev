@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription fmiVersion="3.0-beta.1" modelName="Pipeline_unpredictable" instantiationToken="{58210e20-a83b-11eb-82ba-00155d0450ce}">
+ <CoSimulation modelIdentifier="Pipeline_unpredictable" canHandleVariableCommunicationStepSize="true" canReturnEarlyAfterIntermediateUpdate="true" hasEventMode="true"/>
+ <ModelVariables>
+  <Int32 name="in" valueReference="1001" causality="input" variability="discrete" clocks="1002"/>
+  <Clock name="inClock" valueReference="1002" causality="input" variability="discrete" interval="triggered"/>
+  <Int32 name="out" valueReference="2001" causality="output" variability="discrete" clocks="2002"/>
+  <Clock name="outClock" valueReference="2002" causality="output" variability="discrete" interval="triggered"/>
+  <Int32 name="randomSeed" valueReference="3001" causality="parameter" variability="fixed"/>
+ </ModelVariables>
+ <ModelStructure>
+  <Output valueReference="2001" dependencies="1001 1002"/>
+  <Output valueReference="2002" dependencies="1001 1002"/>
+ </ModelStructure>
+</fmiModelDescription>
