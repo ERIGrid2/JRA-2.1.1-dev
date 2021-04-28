@@ -20,7 +20,7 @@ This repository contains:
 ### Building the test FMUs (Linux)
 
 The following lines will create the complete test FMUs in folder `fmi3/build/dist`:
-```
+```bash
 cd fmi3
 mkdir build
 cd build
@@ -31,7 +31,7 @@ make
 ### Running the tests (C++)
 
 After building the test FMUs, build the tests:
-```
+```bash
 cd test-cpp
 mkdir build
 cd build
