@@ -8,6 +8,8 @@ This repository contains:
 
  * Source code for FMI 3.0-compliant test FMUs (folder `fmi3`)
  * C++ source code for running the test FMUs (folder `test-cpp`)
+ * A python wrapper for executing FMUs from python (folder `python-wrapper`)
+ * Python test code to replicate the results of the C++ tests (same folder as the python wrapper)
  
 ## Installation and Usage (Ubuntu 20.04)
 
@@ -15,7 +17,8 @@ This repository contains:
 
  * CMake (version 3.12 or later): `sudo apt install cmake`
  * GCC toolchain: `sudo apt install build-essential`
- * Python
+ * Python 3
+ * Python package urllib3
 
 ### Building the test FMUs (Linux)
 
@@ -46,4 +49,13 @@ make
 
 ### Running the tests (Python)
 
-TBD
+```bash
+cd python-wrapper
+python <test-script>
+```
+where <test-script> is one of {`TestDeterministic.py`, `TestUnpredictable.py`}
+
+**NOTES**
+
+* The python code requires the FMUs to be built (see above) and expects the folder structure to be unmodified. If a different folder structure is desired, the `model_path` variable in either test script has to be adapted.
+ 
