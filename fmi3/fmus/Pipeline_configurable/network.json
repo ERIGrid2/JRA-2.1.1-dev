@@ -1,0 +1,40 @@
+{
+  "networkDescription":  {
+      "format": "1.0",
+      "name"  : "Test network one-node",
+      "pipelines" : [
+          {
+              "name"      : "AB",
+              "startNode" : "A",
+              "endNode"   : "B",
+              "delay"     : "0.1",
+              "jitter"    : "0.05",
+              "loss"      : "0.01"
+          },
+          {
+              "name"      : "BC",
+              "startNode" : "B",
+              "endNode"   : "C",
+              "delay"     : "0.1",
+              "jitter"    : "0.05",
+              "loss"      : "0.01"
+          },
+          {
+              "name"      : "BD",
+              "startNode" : "B",
+              "endNode"   : "D",
+              "delay"     : "0.1",
+              "jitter"    : "0.05",
+              "loss"      : "0.01"
+          },
+          {
+              "name"      : "XB",
+              "startNode" : "X",
+              "endNode"   : "B",
+              "delay"     : "0.1",
+              "jitter"    : "0.05",
+              "loss"      : "0.01"
+          }
+      ]
+  }
+}

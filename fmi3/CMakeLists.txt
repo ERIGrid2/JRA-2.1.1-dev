@@ -2,9 +2,21 @@ cmake_minimum_required(VERSION 3.12)
 
 project(JRA-2.1.1_dummy_fmu)
 
-set(MODEL_NAMES Pipeline_deterministic Pipeline_unpredictable)
+set(MODEL_NAMES Pipeline_deterministic Pipeline_unpredictable Pipeline_configurable)
 
 set(FMI_VERSION 3)
+
+##generate dynamic FMI3.xml for the configurable FMU. TODO: This is a hack with hardcoded paths right now. Make this more elegant.
+execute_process(COMMAND python generate_fmi3xml.py
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/fmus/Pipeline_configurable)
+
+##add_custom_command(
+##        OUTPUT
+##           ${PROJECT_SOURCE_DIR}/fmus/Pipeline_configurable/FMI3.xml
+##        DEPENDS ${PROJECT_SOURCE_DIR}/fmus/Pipeline_configurable/network.json
+##        COMMAND python generate_fmi3xml.py
+##        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/fmus/Pipeline_configurable 
+##)
 
 if(MSVC)
   string(REPLACE "/MD"  "/MT"  CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
