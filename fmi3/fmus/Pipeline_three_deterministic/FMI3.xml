@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription fmiVersion="3.0-beta.5" modelName="Pipeline_three_deterministic" instantiationToken="{a67992a0-a385-11eb-aea4-00155d0bce5e}">
+ <CoSimulation modelIdentifier="Pipeline_three_deterministic" canHandleVariableCommunicationStepSize="true" canReturnEarlyAfterIntermediateUpdate="true" hasEventMode="true"/>
+ <ModelVariables>
+  <Float64 name="time" valueReference="0" causality="independent" variability="continuous" description="Simulation time"/>
+  <Int32 name="in1" valueReference="1001" causality="input" variability="discrete" clocks="1002" start="-1"/>
+  <Clock name="inClock1" valueReference="1002" causality="input" intervalVariability="triggered"/>
+  <Int32 name="in2" valueReference="1003" causality="input" variability="discrete" clocks="1004" start="-1"/>
+  <Clock name="inClock2" valueReference="1004" causality="input" intervalVariability="triggered"/>
+  <Int32 name="out" valueReference="2001" causality="output" variability="discrete" clocks="2002"/>
+  <Clock name="outClock" valueReference="2002" causality="output" intervalVariability="triggered"/>
+  <Int32 name="randomSeed" valueReference="3001" causality="parameter" variability="fixed" start="4567"/>
+  <Float64 name="randomMean" valueReference="3002" causality="parameter" variability="fixed" start="100"/>
+  <Float64 name="randomStdDev" valueReference="3003" causality="parameter" variability="fixed" start="50"/>
+  <Float64 name="randomMin" valueReference="3004" causality="parameter" variability="fixed" start="30"/>
+ </ModelVariables>
+ <ModelStructure>
+  <Output valueReference="2001" dependencies="1001 1002 1003 1004"/>
+  <Output valueReference="2002" dependencies="1001 1002 1003 1004"/>
+ </ModelStructure>
+</fmiModelDescription>
