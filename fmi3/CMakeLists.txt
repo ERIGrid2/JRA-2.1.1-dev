@@ -2,21 +2,14 @@ cmake_minimum_required(VERSION 3.12)
 
 project(JRA-2.1.1_dummy_fmu)
 
-set(MODEL_NAMES Pipeline_deterministic Pipeline_unpredictable Pipeline_configurable)
+#set(MODEL_NAMES Pipeline_deterministic Pipeline_det_dummy Pipeline_unpredictable Network_configurable)
+set(MODEL_NAMES Pipeline_deterministic Pipeline_two_deterministic Pipeline_three_deterministic Pipeline_four_deterministic)
 
 set(FMI_VERSION 3)
 
 ##generate dynamic FMI3.xml for the configurable FMU. TODO: This is a hack with hardcoded paths right now. Make this more elegant.
 execute_process(COMMAND python generate_fmi3xml.py
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/fmus/Pipeline_configurable)
-
-##add_custom_command(
-##        OUTPUT
-##           ${PROJECT_SOURCE_DIR}/fmus/Pipeline_configurable/FMI3.xml
-##        DEPENDS ${PROJECT_SOURCE_DIR}/fmus/Pipeline_configurable/network.json
-##        COMMAND python generate_fmi3xml.py
-##        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/fmus/Pipeline_configurable 
-##)
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/fmus/Network_configurable)
 
 if(MSVC)
   string(REPLACE "/MD"  "/MT"  CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
@@ -50,6 +43,8 @@ add_compile_definitions(FMI_VERSION=${FMI_VERSION})
 
 foreach(MODEL_NAME ${MODEL_NAMES})
 
+  MESSAGE("=== Model=" ${MODEL_NAME})
+
   set(TARGET_NAME ${MODEL_NAME})
 
   SET(HEADERS
@@ -62,12 +57,25 @@ foreach(MODEL_NAME ${MODEL_NAMES})
     ${PROJECT_SOURCE_DIR}/include/InstanceBase.h
   )
 
+  IF("${MODEL_NAME}" MATCHES "Pipeline_[^_]+_deterministic")
+  SET(SOURCES
+    ${PROJECT_SOURCE_DIR}/fmus/${MODEL_NAME}/${MODEL_NAME}.cpp
+    ${PROJECT_SOURCE_DIR}/fmus/${MODEL_NAME}/MessagePipeline.cpp
+    ${PROJECT_SOURCE_DIR}/fmus/${MODEL_NAME}/PipeInterconnector.cpp
+    ${PROJECT_SOURCE_DIR}/src/fmi${FMI_VERSION}Functions.cpp
+    ${PROJECT_SOURCE_DIR}/src/AllowedFMUMode.cpp
+    ${PROJECT_SOURCE_DIR}/src/InstanceBase.cpp
+  )  
+  ELSE()
   SET(SOURCES
     ${PROJECT_SOURCE_DIR}/fmus/${MODEL_NAME}/${MODEL_NAME}.cpp
     ${PROJECT_SOURCE_DIR}/src/fmi${FMI_VERSION}Functions.cpp
     ${PROJECT_SOURCE_DIR}/src/AllowedFMUMode.cpp
     ${PROJECT_SOURCE_DIR}/src/InstanceBase.cpp
   )
+
+  ENDIF()
+  MESSAGE("Sources: " ${SOURCES})
 
   add_library(${TARGET_NAME} SHARED
     ${HEADERS}

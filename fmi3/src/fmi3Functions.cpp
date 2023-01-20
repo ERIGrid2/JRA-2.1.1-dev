@@ -57,11 +57,11 @@ fmi3Status fmi3SetDebugLogging(
 fmi3Instance fmi3InstantiateModelExchange(
     fmi3String instanceName,
     fmi3String instantiationToken,
-    fmi3String resourceLocation,
+    fmi3String resourcePath,
     fmi3Boolean visible,
     fmi3Boolean loggingOn,
     fmi3InstanceEnvironment instanceEnvironment,
-    fmi3CallbackLogMessage logMessage
+    fmi3LogMessageCallback logMessage
 ) {
     return NULL;
 }
@@ -69,7 +69,7 @@ fmi3Instance fmi3InstantiateModelExchange(
 fmi3Instance fmi3InstantiateCoSimulation(
     fmi3String instanceName,
     fmi3String instantiationToken,
-    fmi3String resourceLocation,
+    fmi3String resourcePath,
     fmi3Boolean visible,
     fmi3Boolean loggingOn,
     fmi3Boolean eventModeUsed,
@@ -77,15 +77,15 @@ fmi3Instance fmi3InstantiateCoSimulation(
     const fmi3ValueReference requiredIntermediateVariables[],
     size_t nRequiredIntermediateVariables,
     fmi3InstanceEnvironment instanceEnvironment,
-    fmi3CallbackLogMessage logMessage,
-    fmi3CallbackIntermediateUpdate intermediateUpdate
+    fmi3LogMessageCallback logMessage,
+    fmi3IntermediateUpdateCallback intermediateUpdate
 ) {
     try 
     {
         InstanceBase *instance = new INSTANCE_TYPE(
             instanceName,
             instantiationToken,
-            resourceLocation,
+            resourcePath,
             visible,
             loggingOn,
             eventModeUsed,
@@ -103,7 +103,6 @@ fmi3Instance fmi3InstantiateCoSimulation(
     {
         logMessage(
             instanceEnvironment,
-            instanceName,
             fmi3Fatal,
             "ERROR",
             err.what()
@@ -113,22 +112,20 @@ fmi3Instance fmi3InstantiateCoSimulation(
     return NULL;
 }
 
-fmi3Instance fmi3InstantiateScheduledExecution(
+/*fmi3Instance fmi3InstantiateScheduledExecution(
     fmi3String instanceName,
     fmi3String instantiationToken,
-    fmi3String resourceLocation,
+    fmi3String resourcePath,
     fmi3Boolean visible,
     fmi3Boolean loggingOn,
-    const fmi3ValueReference requiredIntermediateVariables[],
-    size_t nRequiredIntermediateVariables,
     fmi3InstanceEnvironment instanceEnvironment,
-    fmi3CallbackLogMessage logMessage,
-    fmi3CallbackIntermediateUpdate intermediateUpdate,
-    fmi3CallbackLockPreemption lockPreemption,
-    fmi3CallbackUnlockPreemption unlockPreemption
+    fmi3LogMessageCallback logMessage,
+    fmi3ClockUpdateCallback clockUpdate,
+    fmi3LockPreemptionCallback lockPreemption,
+    fmi3UnlockPreemptionCallback unlockPreemption
 ) {
-    return NULL;
-}
+    NOT_IMPLEMENTED
+}*/
 
 
 void fmi3FreeInstance(
@@ -165,20 +162,10 @@ fmi3Status fmi3ExitInitializationMode(
 }
 
 fmi3Status fmi3EnterEventMode(
-    fmi3Instance instance,
-    fmi3Boolean stepEvent,
-    fmi3Boolean stateEvent,
-    const fmi3Int32 rootsFound[],
-    size_t nEventIndicators,
-    fmi3Boolean timeEvent
+    fmi3Instance instance
 ) {
     CHECK_STATE_AND_CALL_METHOD(
-        enterEventMode,
-        stepEvent,
-        stateEvent,
-        rootsFound,
-        nEventIndicators,
-        timeEvent
+        enterEventMode
     )
 }
 
@@ -604,7 +591,7 @@ fmi3Status fmi3SetBinary(
     fmi3Instance instance,
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    const size_t sizes[],
+    const size_t valueSizes[],
     const fmi3Binary values[],
     size_t nValues
 ) {
@@ -612,7 +599,7 @@ fmi3Status fmi3SetBinary(
         setBinary,
         valueReferences,
         nValueReferences,
-        sizes,
+        valueSizes,
         values,
         nValues
     )
@@ -726,10 +713,10 @@ fmi3Status fmi3GetDirectionalDerivative(
     size_t nUnknowns,
     const fmi3ValueReference knowns[],
     size_t nKnowns,
-    const fmi3Float64 deltaKnowns[],
-    size_t nDeltaKnowns,
-    fmi3Float64 deltaUnknowns[],
-    size_t nDeltaOfUnknowns
+    const fmi3Float64 seed[],
+    size_t nSeed,
+    fmi3Float64 sensitivity[],
+    size_t nSensitivity
 ) {
     CHECK_STATE_AND_CALL_METHOD(
         getDirectionalDerivative,
@@ -737,10 +724,10 @@ fmi3Status fmi3GetDirectionalDerivative(
         nUnknowns,
         knowns,
         nKnowns,
-        deltaKnowns,
-        nDeltaKnowns,
-        deltaUnknowns,
-        nDeltaOfUnknowns
+        seed,
+        nSeed,
+        sensitivity,
+        nSensitivity
     )
 }
 
@@ -750,10 +737,10 @@ fmi3Status fmi3GetAdjointDerivative(
     size_t nUnknowns,
     const fmi3ValueReference knowns[],
     size_t nKnowns,
-    const fmi3Float64 deltaUnknowns[],
-    size_t nDeltaOfUnknowns,
-    fmi3Float64 deltaKnowns[],
-    size_t nDeltaKnowns
+    const fmi3Float64 seed[],
+    size_t nSeed,
+    fmi3Float64 sensitivity[],
+    size_t nSensitivity
 ) {
     CHECK_STATE_AND_CALL_METHOD(
         getAdjointDerivative,
@@ -761,10 +748,10 @@ fmi3Status fmi3GetAdjointDerivative(
         nUnknowns,
         knowns,
         nKnowns,
-        deltaUnknowns,
-        nDeltaOfUnknowns,
-        deltaKnowns,
-        nDeltaKnowns
+        seed,
+        nSeed,
+        sensitivity,
+        nSensitivity
     )
 }
 
@@ -788,15 +775,13 @@ fmi3Status fmi3SetClock(
     fmi3Instance instance,
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    const fmi3Clock values[],
-    size_t nValues
+    const fmi3Clock values[]
 ) {
     CHECK_STATE_AND_CALL_METHOD(
         setClock,
         valueReferences,
         nValueReferences,
-        values,
-        nValues
+        values
     )
 }
 
@@ -804,15 +789,13 @@ fmi3Status fmi3GetClock(
     fmi3Instance instance,
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    fmi3Clock values[],
-    size_t nValues
+    fmi3Clock values[]
 ) {
     CHECK_STATE_AND_CALL_METHOD(
         getClock,
         valueReferences,
         nValueReferences,
-        values,
-        nValues
+        values
     )
 }
 
@@ -821,16 +804,14 @@ fmi3Status fmi3GetIntervalDecimal(
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
     fmi3Float64 interval[],
-    fmi3IntervalQualifier qualifier[],
-    size_t nValues
+    fmi3IntervalQualifier qualifiers[]
 ) {
     CHECK_STATE_AND_CALL_METHOD(
         getIntervalDecimal,
         valueReferences,
         nValueReferences,
         interval,
-        qualifier,
-        nValues
+        qualifiers
     )
 }
 
@@ -838,15 +819,13 @@ fmi3Status fmi3SetIntervalDecimal(
     fmi3Instance instance,
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    const fmi3Float64 interval[],
-    size_t nValues
+    const fmi3Float64 intervals[]
 ) {
     CHECK_STATE_AND_CALL_METHOD( 
         setIntervalDecimal,
         valueReferences,
         nValueReferences,
-        interval,
-        nValues
+        intervals
     )
 }
 
@@ -854,19 +833,17 @@ fmi3Status fmi3GetIntervalFraction(
     fmi3Instance instance,
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    fmi3UInt64 intervalCounter[],
-    fmi3UInt64 resolution[],
-    fmi3IntervalQualifier qualifier[],
-    size_t nValues
+    fmi3UInt64 counters[],
+    fmi3UInt64 resolutions[],
+    fmi3IntervalQualifier qualifiers[]
 ) {
     CHECK_STATE_AND_CALL_METHOD( 
         getIntervalFraction,
         valueReferences,
         nValueReferences,
-        intervalCounter,
-        resolution,
-        qualifier,
-        nValues
+        counters,
+        resolutions,
+        qualifiers
     )
 }
 
@@ -874,17 +851,15 @@ fmi3Status fmi3SetIntervalFraction(
     fmi3Instance instance,
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    const fmi3UInt64 intervalCounter[],
-    const fmi3UInt64 resolution[],
-    size_t nValues
+    const fmi3UInt64 counters[],
+    const fmi3UInt64 resolutions[]
 ) {
     CHECK_STATE_AND_CALL_METHOD( 
         setIntervalFraction,
         valueReferences,
         nValueReferences,
-        intervalCounter,
-        resolution,
-        nValues
+        counters,
+        resolutions
     )
 }
 
@@ -914,6 +889,25 @@ fmi3Status fmi3EnterContinuousTimeMode(
     NOT_IMPLEMENTED
 }
 
+fmi3Status fmi3SetShiftDecimal(
+    fmi3Instance instance,
+    const fmi3ValueReference valueReferences[],
+    size_t nValueReferences,
+    const fmi3Float64 shifts[]
+) {
+    NOT_IMPLEMENTED
+}
+
+fmi3Status fmi3SetShiftFraction(
+    fmi3Instance instance,
+    const fmi3ValueReference valueReferences[],
+    size_t nValueReferences,
+    const fmi3Float64 counters[],
+    const fmi3Float64 resolutions[]
+) {
+    NOT_IMPLEMENTED
+}
+
 fmi3Status fmi3CompletedIntegratorStep(
     fmi3Instance instance, 
     fmi3Boolean noSetFMUStatePriorToCurrentPoint,
@@ -932,13 +926,13 @@ fmi3Status fmi3SetTime(
 
 fmi3Status fmi3SetContinuousStates(
     fmi3Instance instance, 
-    const fmi3Float64 x[], 
-    size_t nx
+    const fmi3Float64 continuousStates[],
+    size_t nContinuousStates
 ) {
     NOT_IMPLEMENTED
 }
 
-fmi3Status fmi3GetDerivatives(
+fmi3Status fmi3GetContinuousStateDerivatives(
     fmi3Instance instance, 
     fmi3Float64 derivatives[], 
     size_t nContinuousStates
@@ -949,37 +943,37 @@ fmi3Status fmi3GetDerivatives(
 fmi3Status fmi3GetEventIndicators(
     fmi3Instance instance, 
     fmi3Float64 eventIndicators[], 
-    size_t ni
+    size_t nEventIndicators
 ) {
     NOT_IMPLEMENTED
 }
 
 fmi3Status fmi3GetContinuousStates(
     fmi3Instance instance, 
-    fmi3Float64 states[], 
-    size_t nx
+    fmi3Float64 continuousStates[],
+    size_t nContinuousStates
 ) {
     NOT_IMPLEMENTED
 }
 
 fmi3Status fmi3GetNominalsOfContinuousStates(
     fmi3Instance instance, 
-    fmi3Float64 x_nominal[], 
-    size_t nx
+    fmi3Float64 nominals[],
+    size_t nContinuousStates
 ) {
     NOT_IMPLEMENTED
 }
 
 fmi3Status fmi3GetNumberOfEventIndicators(
     fmi3Instance instance, 
-    size_t* nz
+    size_t* nEventIndicators
 ) {
     NOT_IMPLEMENTED
 }
 
 fmi3Status fmi3GetNumberOfContinuousStates(
     fmi3Instance instance, 
-    size_t* nx
+    size_t* nContinuousStates
 ) {
     NOT_IMPLEMENTED
 }
@@ -1015,7 +1009,7 @@ fmi3Status fmi3DoStep(
     fmi3Float64 currentCommunicationPoint,
     fmi3Float64 communicationStepSize,
     fmi3Boolean noSetFMUStatePriorToCurrentPoint,
-    fmi3Boolean* eventEncountered,
+    fmi3Boolean* eventHandlingNeeded,
     fmi3Boolean* terminateSimulation,
     fmi3Boolean* earlyReturn,
     fmi3Float64* lastSuccessfulTime
@@ -1025,7 +1019,7 @@ fmi3Status fmi3DoStep(
         currentCommunicationPoint,
         communicationStepSize,
         noSetFMUStatePriorToCurrentPoint,
-        eventEncountered,
+        eventHandlingNeeded,
         terminateSimulation,
         earlyReturn,
         lastSuccessfulTime
@@ -1035,7 +1029,6 @@ fmi3Status fmi3DoStep(
 fmi3Status fmi3ActivateModelPartition(
     fmi3Instance instance,
     fmi3ValueReference clockReference,
-    size_t clockElementIndex,
     fmi3Float64 activationTime
 ) {
     NOT_IMPLEMENTED

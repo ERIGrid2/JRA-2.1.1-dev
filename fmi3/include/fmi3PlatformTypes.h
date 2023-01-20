@@ -2,11 +2,11 @@
 #define fmi3PlatformTypes_h
 
 /*
-This header file defines the data types of FMI 3.0-alpha.6.
+This header file defines the data types of FMI 3.0.
 It must be used by both FMU and FMI master.
 
 Copyright (C) 2008-2011 MODELISAR consortium,
-              2012-2020 Modelica Association Project "FMI"
+              2012-2022 Modelica Association Project "FMI"
               All rights reserved.
 
 This file is licensed by the copyright holders under the 2-Clause BSD License
@@ -37,20 +37,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------------
 */
 
-/* Include the integer type definitions */
+/* Include the integer and boolean type definitions */
 #include <stdint.h>
+#include <stdbool.h>
 
 
 /* tag::Component[] */
-typedef void*           fmi3Instance;             /* Pointer to FMU instance */
+typedef           void* fmi3Instance;             /* Pointer to the FMU instance */
 /* end::Component[] */
 
 /* tag::ComponentEnvironment[] */
-typedef void*           fmi3InstanceEnvironment;  /* Pointer to FMU environment */
+typedef           void* fmi3InstanceEnvironment;  /* Pointer to the FMU environment */
 /* end::ComponentEnvironment[] */
 
 /* tag::FMUState[] */
-typedef void*           fmi3FMUState;             /* Pointer to internal FMU state */
+typedef           void* fmi3FMUState;             /* Pointer to the internal FMU state */
 /* end::FMUState[] */
 
 /* tag::ValueReference[] */
@@ -59,7 +60,9 @@ typedef        uint32_t fmi3ValueReference;       /* Handle to the value of a va
 
 /* tag::VariableTypes[] */
 typedef           float fmi3Float32;  /* Single precision floating point (32-bit) */
+/* tag::fmi3Float64[] */
 typedef          double fmi3Float64;  /* Double precision floating point (64-bit) */
+/* end::fmi3Float64[] */
 typedef          int8_t fmi3Int8;     /* 8-bit signed integer */
 typedef         uint8_t fmi3UInt8;    /* 8-bit unsigned integer */
 typedef         int16_t fmi3Int16;    /* 16-bit signed integer */
@@ -80,12 +83,12 @@ typedef            bool fmi3Clock;    /* Data type to be used with fmi3ClockActi
                                          fmi3ClockInactive */
 
 /* Values for fmi3Boolean */
-#define fmi3True  1
-#define fmi3False 0
+#define fmi3True  true
+#define fmi3False false
 
 /* Values for fmi3Clock */
-#define fmi3ClockActive   1
-#define fmi3ClockInactive 0
+#define fmi3ClockActive   true
+#define fmi3ClockInactive false
 /* end::VariableTypes[] */
 
 #endif /* fmi3PlatformTypes_h */

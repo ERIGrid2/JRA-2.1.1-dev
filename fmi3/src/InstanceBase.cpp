@@ -7,6 +7,7 @@
 #include "InstanceBase.h"
 
 #include "fmi3FunctionTypes.h"
+#include <iostream>
 
 #include "FMUMode.h"
 
@@ -26,8 +27,8 @@ InstanceBase::InstanceBase(
     const fmi3ValueReference requiredIntermediateVariables[],
     size_t nRequiredIntermediateVariables,
     fmi3InstanceEnvironment instanceEnvironment,
-    fmi3CallbackLogMessage logMessage,
-    fmi3CallbackIntermediateUpdate intermediateUpdate
+    fmi3LogMessageCallback logMessage,
+    fmi3IntermediateUpdateCallback intermediateUpdate
 ) :
     instanceName_( instanceName ),
     instantiationToken_( instantiationToken ),
@@ -81,13 +82,8 @@ InstanceBase::exitInitializationMode()
 }
 
 fmi3Status
-InstanceBase::enterEventMode(
-    fmi3Boolean stepEvent,
-    fmi3Boolean stateEvent,
-    const fmi3Int32 rootsFound[],
-    size_t nEventIndicators,
-    fmi3Boolean timeEvent
-) {
+InstanceBase::enterEventMode()
+{
     this->mode_ = eventMode;
     return fmi3OK;
 }
@@ -242,8 +238,7 @@ fmi3Status
 InstanceBase::getClock(
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    fmi3Clock values[],
-    size_t nValues
+    fmi3Clock values[]
 ) {
     NOT_IMPLEMENTED
 }
@@ -383,8 +378,7 @@ fmi3Status
 InstanceBase::setClock(
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    const fmi3Clock values[],
-    size_t nValues
+    const fmi3Clock values[]
 ) {
     NOT_IMPLEMENTED
 }
@@ -507,8 +501,7 @@ InstanceBase::getIntervalDecimal(
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
     fmi3Float64 interval[],
-    fmi3IntervalQualifier qualifier[],
-    size_t nValues
+    fmi3IntervalQualifier qualifiers[]
 ) {
     NOT_IMPLEMENTED
 }
@@ -517,10 +510,9 @@ fmi3Status
 InstanceBase::getIntervalFraction(
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    fmi3UInt64 intervalCounter[],
-    fmi3UInt64 resolution[],
-    fmi3IntervalQualifier qualifier[],
-    size_t nValues
+    fmi3UInt64 counters[],
+    fmi3UInt64 resolutions[],
+    fmi3IntervalQualifier qualifiers[]
 ) {
     NOT_IMPLEMENTED
 }
@@ -550,8 +542,7 @@ fmi3Status
 InstanceBase::setIntervalDecimal(
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
-    const fmi3Float64 interval[],
-    size_t nValues
+    const fmi3Float64 interval[]
 ) {
     NOT_IMPLEMENTED
 }
@@ -561,8 +552,7 @@ InstanceBase::setIntervalFraction(
     const fmi3ValueReference valueReferences[],
     size_t nValueReferences,
     const fmi3UInt64 intervalCounter[],
-    const fmi3UInt64 resolution[],
-    size_t nValues
+    const fmi3UInt64 resolution[]
 ) {
     NOT_IMPLEMENTED
 }
@@ -630,10 +620,12 @@ InstanceBase::logMessage(
     vsnprintf( buf, len + 1, message, args );
     va_end( args1 );
 
-    this->logger_(
+    std::cout << "=== [" << category << "] " << instanceName_ << "/" << buf << std::endl;
+
+/*    this->logger_(
         this->instanceEnvironment_, this->instanceName_.c_str(),
         status, category, buf
-    );
+    );*/
 }
 
 void

@@ -33,8 +33,8 @@ public:
         const fmi3ValueReference requiredIntermediateVariables[],
         size_t nRequiredIntermediateVariables,
         fmi3InstanceEnvironment instanceEnvironment,
-        fmi3CallbackLogMessage logMessage,
-        fmi3CallbackIntermediateUpdate intermediateUpdate
+        fmi3LogMessageCallback logMessage,
+        fmi3IntermediateUpdateCallback intermediateUpdate
     );
 
     /* Inquire version numbers and setting logging status */
@@ -59,13 +59,7 @@ public:
 
     virtual fmi3Status exitInitializationMode();
 
-    virtual fmi3Status enterEventMode(
-        fmi3Boolean stepEvent,
-        fmi3Boolean stateEvent,
-        const fmi3Int32 rootsFound[],
-        size_t nEventIndicators,
-        fmi3Boolean timeEvent
-    );
+    virtual fmi3Status enterEventMode();
 
     virtual fmi3Status terminate();
 
@@ -167,8 +161,7 @@ public:
     virtual fmi3Status getClock(
         const fmi3ValueReference valueReferences[],
         size_t nValueReferences,
-        fmi3Clock values[],
-        size_t nValues
+        fmi3Clock values[]
     );
 
     virtual fmi3Status setFloat32(
@@ -258,7 +251,7 @@ public:
     virtual fmi3Status setBinary(
         const fmi3ValueReference valueReferences[],
         size_t nValueReferences,
-        const size_t sizes[],
+        const size_t valueSizes[],
         const fmi3Binary values[],
         size_t nValues
     );
@@ -266,8 +259,7 @@ public:
     virtual fmi3Status setClock(
         const fmi3ValueReference valueReferences[],
         size_t nValueReferences,
-        const fmi3Clock values[],
-        size_t nValues
+        const fmi3Clock values[]
     );
 
     /* Getting Variable Dependency Information */
@@ -346,18 +338,16 @@ public:
     virtual fmi3Status getIntervalDecimal(
         const fmi3ValueReference valueReferences[],
         size_t nValueReferences,
-        fmi3Float64 interval[],
-        fmi3IntervalQualifier qualifier[],
-        size_t nValues
+        fmi3Float64 intervals[],
+        fmi3IntervalQualifier qualifiers[]
     );
 
     virtual fmi3Status getIntervalFraction(
         const fmi3ValueReference valueReferences[],
         size_t nValueReferences,
-        fmi3UInt64 intervalCounter[],
-        fmi3UInt64 resolution[],
-        fmi3IntervalQualifier qualifier[],
-        size_t nValues
+        fmi3UInt64 counters[],
+        fmi3UInt64 resolutions[],
+        fmi3IntervalQualifier qualifiers[]
     );
 
     virtual fmi3Status getShiftDecimal(
@@ -378,16 +368,14 @@ public:
     virtual fmi3Status setIntervalDecimal(
         const fmi3ValueReference valueReferences[],
         size_t nValueReferences,
-        const fmi3Float64 interval[],
-        size_t nValues
+        const fmi3Float64 intervals[]
     );
 
     virtual fmi3Status setIntervalFraction(
         const fmi3ValueReference valueReferences[],
         size_t nValueReferences,
-        const fmi3UInt64 intervalCounter[],
-        const fmi3UInt64 resolution[],
-        size_t nValues
+        const fmi3UInt64 counters[],
+        const fmi3UInt64 resolutions[]
     );
 
     virtual fmi3Status updateDiscreteStates(
@@ -476,11 +464,11 @@ protected:
         return this->instanceEnvironment_;
     }
 
-    const fmi3CallbackLogMessage getLogger() {  
+    const fmi3LogMessageCallback getLogger() {
         return this->logger_; 
     }
 
-    const fmi3CallbackIntermediateUpdate getIntermediateUpdate() { 
+    const fmi3IntermediateUpdateCallback getIntermediateUpdate() {
         return this->intermediateUpdate_; 
     }
 
@@ -501,8 +489,8 @@ private:
 
     const fmi3InstanceEnvironment instanceEnvironment_;
 
-    const fmi3CallbackLogMessage logger_;
-    const fmi3CallbackIntermediateUpdate intermediateUpdate_;
+    const fmi3LogMessageCallback logger_;
+    const fmi3IntermediateUpdateCallback intermediateUpdate_;
 
     FMUMode mode_;
 };

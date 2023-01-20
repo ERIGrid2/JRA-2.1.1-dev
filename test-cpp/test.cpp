@@ -9,8 +9,8 @@
 
 #include "fmi3Functions.h"
 
-static void cb_logMessage(fmi3InstanceEnvironment instanceEnvironment, fmi3String instanceName, fmi3Status status, fmi3String category, fmi3String message) {
-    std::cout << instanceName << " [" << category << "] STATUS = " << status << ", " << message << std::endl;
+static void cb_logMessage(fmi3InstanceEnvironment instanceEnvironment, fmi3Status status, fmi3String category, fmi3String message) {
+    std::cout /*<< instanceName */<< " [" << category << "] STATUS = " << status << ", " << message << std::endl;
 }
 
 int main( int argc, char* argv[] ) 
@@ -18,7 +18,7 @@ int main( int argc, char* argv[] )
     fmi3Instance m = fmi3InstantiateCoSimulation(
         "instance1",             // instance name
         INSTANTIATION_TOKEN,     // instantiation token (from XML)
-        "file:///",              // resource location (extracted FMU)
+        RESOURCE_LOCATION,       // resource location (extracted FMU)
         fmi3False,               // visible
         fmi3True,                // debug logging disabled
         fmi3True,                // event mode used
@@ -144,14 +144,7 @@ int main( int argc, char* argv[] )
             
             std::cout << "At time " << time << ": SEND message with ID = " << msgId << std::endl;
 
-            status = fmi3EnterEventMode(
-               m,
-               fmi3False, // step event --> ME only
-               fmi3False, // state event --> ME only
-               NULL,      // roots found --> ME only
-               0,         // number of event indicators --> ME only
-               fmi3False  // signals that this event is an external event scheduled by the importer
-            );
+            status = fmi3EnterEventMode(m);
 
             if ( status != fmi3OK ) std::cout << "WARNING: status = " << status << std::endl;
 
@@ -174,8 +167,7 @@ int main( int argc, char* argv[] )
                 m,
                 valRefInClock,
                 sizeof( valRefInClock ) / sizeof( fmi3ValueReference ),
-                valInClock,
-                sizeof( valInClock ) / sizeof( fmi3Clock )
+                valInClock
             );
 
             if ( status != fmi3OK ) std::cout << "WARNING: status = " << status << std::endl;
@@ -187,14 +179,7 @@ int main( int argc, char* argv[] )
         {
             std::cout << "At time " << time << ": RECEIVE message" << std::endl;
 
-            status = fmi3EnterEventMode(
-               m,
-               fmi3False, // step event --> ME only
-               fmi3False, // state event --> ME only
-               NULL,      // roots found --> ME only
-               0,         // number of event indicators --> ME only
-               fmi3True   // signals that this event is an internal event which has been previously scheduled by the FMU
-            );
+            status = fmi3EnterEventMode(m);
 
             if ( status != fmi3OK ) std::cout << "WARNING: status = " << status << std::endl;
 
@@ -202,8 +187,7 @@ int main( int argc, char* argv[] )
                 m,
                 valRefOutClock,
                 sizeof( valRefOutClock ) / sizeof( fmi3ValueReference ),
-                valOutClock,
-                sizeof( valOutClock ) / sizeof( fmi3Clock )
+                valOutClock
             );
 
             if ( status != fmi3OK ) std::cout << "WARNING: status = " << status << std::endl;

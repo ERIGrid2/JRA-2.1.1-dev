@@ -23,6 +23,7 @@ MESSAGE("## FMI_PLATFORM: " ${FMI_PLATFORM})
 add_executable(test-deterministic test.cpp)
 target_compile_definitions(test-deterministic
   PRIVATE INSTANTIATION_TOKEN="{a67992a0-a385-11eb-aea4-00155d0bce5e}"
+  PRIVATE RESOURCE_LOCATION="file:///"
 )
 target_include_directories(test-deterministic PRIVATE include ${PROJECT_SOURCE_DIR}/../fmi3/include)
 target_link_libraries(test-deterministic ${CMAKE_DL_LIBS} 
@@ -33,6 +34,7 @@ target_link_libraries(test-deterministic ${CMAKE_DL_LIBS}
 add_executable(test-unpredictable test.cpp)
 target_compile_definitions(test-unpredictable
   PRIVATE INSTANTIATION_TOKEN="{58210e20-a83b-11eb-82ba-00155d0450ce}"
+  PRIVATE RESOURCE_LOCATION="file:///"
 )
 target_include_directories(test-unpredictable PRIVATE include ${PROJECT_SOURCE_DIR}/../fmi3/include)
 target_link_libraries(test-unpredictable ${CMAKE_DL_LIBS} 

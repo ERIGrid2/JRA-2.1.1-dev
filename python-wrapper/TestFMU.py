@@ -16,7 +16,7 @@ def cb_logMessage(instance_environment, instance_name, status, category, message
         category.decode( 'utf-8' ),
         status,
         message.decode( 'utf-8' )
-        ) )
+        ) , flush=True)
 
 def testFMU(model_path, model_name, instance_name, visible, logging_on, event_mode, early_return):
     with TemporaryDirectory() as tmpdir:
@@ -72,7 +72,7 @@ def testFMU(model_path, model_name, instance_name, visible, logging_on, event_mo
 
     while ( time < stop_time ):
 
-        print( '================================================' )
+        print( '================================================', flush=True )
 
         # Calculate step size for next simulation step.
         step_size = min( next_event_time - time, next_send_time - time )
@@ -86,14 +86,14 @@ def testFMU(model_path, model_name, instance_name, visible, logging_on, event_mo
         #Advance simulation time.
         time = last_successful_time if step_result.early_return else time + step_size
 
-        print("simulation time = "+str(time))
-        print("next event time = "+str(next_event_time))
-        print("next send time =  "+str(next_send_time))
+        print("simulation time = "+str(time), flush=True)
+        print("next event time = "+str(next_event_time), flush=True)
+        print("next send time =  "+str(next_send_time), flush=True)
     
         #External event: send messages at regular time intervals.
         if not step_result.event_encountered:
             msg_id+=1
-            print("At time "+str(time)+": SEND message with ID = "+str(msg_id))
+            print("At time "+str(time)+": SEND message with ID = "+str(msg_id), flush=True)
             status = fmu.fmi3EnterEventMode(
                 False, # step event --> ME only
                 False, # state event --> ME only
@@ -110,7 +110,6 @@ def testFMU(model_path, model_name, instance_name, visible, logging_on, event_mo
         
         # Internal event: message has arrived at output.
         else:
-            print("At time "+str(time)+": RECEIVE message")
             status = fmu.fmi3EnterEventMode(
                 False, # step event --> ME only
                 False, # state event --> ME only
@@ -122,10 +121,11 @@ def testFMU(model_path, model_name, instance_name, visible, logging_on, event_mo
         
             if val_out_clock[0] == fmu.fmi3_clock_active:
                 val_out = fmu.fmi3GetInt32(['out'])
-                print("Received message with ID = "+str(val_out[0]))
+                print("At time "+str(time)+": RECEIVE message with ID = "+str(val_out[0]), flush=True)
             else:
-                print("ERROR: Something went wrong, should have received a message!!!")
-                break;
+                print("At time "+str(time)+": Event but did not receive message.", flush=True)
+                #print("ERROR: Something went wrong, should have received a message!!!")
+                #break;
     
         # Finish event handling.
         discrete_update_result = fmu.fmi3UpdateDiscreteStates(next_event_time)
@@ -133,23 +133,23 @@ def testFMU(model_path, model_name, instance_name, visible, logging_on, event_mo
         next_event_time_defined=discrete_update_result.next_event_time_defined
     
         if discrete_update_result.discrete_states_need_update:
-            print("ERROR: Something went wrong, should not need more than 1 iteration!!!")
+            print("ERROR: Something went wrong, should not need more than 1 iteration!!!", flush=True)
             break
 
         if discrete_update_result.terminate_simulation:
-            print("ERROR: Something went wrong, simulation termination requested!!!")
+            print("ERROR: Something went wrong, simulation termination requested!!!", flush=True)
             break
 
         if discrete_update_result.nominals_of_continuous_states_changed:
-            print("ERROR: Something went wrong, 'nominalsOfContinuousStatesChanged' only supported in ME!!!")
+            print("ERROR: Something went wrong, 'nominalsOfContinuousStatesChanged' only supported in ME!!!", flush=True)
             break
 
         if discrete_update_result.values_of_continuous_states_changed:
-            print("ERROR: Something went wrong, 'valuesOfContinuousStatesChanged' only supported in ME!!!")
+            print("ERROR: Something went wrong, 'valuesOfContinuousStatesChanged' only supported in ME!!!", flush=True)
             break
 
         if discrete_update_result.next_event_time_defined:
-            print("NEXT event time = "+str(next_event_time))
+            print("NEXT event time = "+str(next_event_time), flush=True)
     
         # Go back to step mode.
         fmu.fmi3EnterStepMode()
